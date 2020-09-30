@@ -7,6 +7,7 @@ module.exports = function createDreamTeam(members) {
   else{
     let newArray = members.filter(member => typeof(member) === 'string');
      
-     return newArray = members.map(member => member.trim()[0].toLocaleUpperCase()).sort().join('') || false;
+     return newArray = members.map(member => member.trim()[0].toLocaleUpperCase()).sort().join('');
+     
   }
 };

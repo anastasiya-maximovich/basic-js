@@ -1,26 +1,42 @@
 const CustomError = require("../extensions/custom-error");
 
 module.exports = function transform(arr) {
-  //  throw new CustomError('Not implemented');
-  // remove line with error and write your code here
- if (!Array.isArray(arr)) {
-   throw Error;
-  }
-
-  let result = [];
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] !== '--double-next' && arr[i] !== '--double-prev' && arr[i] !== '--discard-next' && arr[i] !== '--discard-prev') {
-      result.push(arr[i]);
-    } else if (aarr[i] === '--double-next' && arr[i + 1] !== undefined) {
-      result.push(arr[i + 1]);
-    } else if (arr[i] === '--double-prev' && arr[i - 1] !== undefined && arr[i-2] !== "--discard-next") {
-      result.push(arr[i - 1]);
-    } else if (arr[i] === '--discard-next' && arr[i + 1] !== undefined) {
-      i++;
-    } else if (arr[i] === '--discard-prev' && arr[i - 1] !== undefined && arr[i-2] !== "--discard-next") {
-      result.pop(arr[i - 1]);
+    if (!Array.isArray(arr)) {
+        throw new Error();
     }
-  }
 
-  return result;
+    const out = arr.slice();
+    const discard = Symbol("Discarded item");
+
+    for (let i = 0; i < arr.length; i++) {
+        switch (arr[i]) {
+            case '--discard-next':
+                if (i < out.length - 1) {
+                    out[i + 1] = discard;
+                }
+                out[i] = discard;
+                break;
+            case '--discard-prev':
+                if (i > 0) {
+                    out[i - 1] = discard;
+                }
+                out[i] = discard;
+                break;
+            case '--double-next':
+                if (i < out.length - 1) {
+                    out[i] = out[i + 1];
+                } else {
+                    out[i] = discard;
+                }
+                break;
+            case '--double-prev':
+                if (i > 0) {
+                    out[i] = out[i - 1];
+                } else {
+                    out[i] = discard;
+                }
+        }
+    }
+
+    return out.filter(el => el !== discard);
 };

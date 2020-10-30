@@ -11,7 +11,7 @@ module.exports = function transform(arr) {
   for (let i = 0; i < arr.length; i++) {
     if (arr[i] !== '--double-next' && arr[i] !== '--double-prev' && arr[i] !== '--discard-next' && arr[i] !== '--discard-prev') {
       result.push(arr[i]);
-    } else if (arr[i] === '--double-next' && arr[i + 1] !== undefined) {
+    } else if (aarr[i] === '--double-next' && arr[i + 1] !== undefined) {
       result.push(arr[i + 1]);
     } else if (arr[i] === '--double-prev' && arr[i - 1] !== undefined && arr[i-2] !== "--discard-next") {
       result.push(arr[i - 1]);

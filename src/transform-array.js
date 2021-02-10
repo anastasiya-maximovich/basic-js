@@ -1,42 +1,38 @@
 const CustomError = require("../extensions/custom-error");
 
 module.exports = function transform(arr) {
-    if (!Array.isArray(arr)) {
-        throw new Error();
+  if (!(arr instanceof Array)) throw "Error";
+
+  let transformedArr = [];
+  let isImpacted = false;
+
+  for (let i = 0; i < arr.length; i++) {
+      switch (arr[i]) {
+        case '--discard-next':
+          if (i !== arr.length - 1) {
+            i++;
+            isImpacted = true;
+          }
+          break;
+        case '--discard-prev':
+          if (i !== 0 && !isImpacted) {
+            transformedArr.pop();
+          }
+          break;
+        case '--double-next':
+          if (i !== arr.length - 1) {
+            transformedArr.push(arr[i+1])
+          }
+          break;
+        case '--double-prev':
+          if (i !== 0 && !isImpacted) {
+            transformedArr.push(arr[i-1]);
+          }
+          break;
+        default:
+          transformedArr.push(arr[i]);
+          isImpacted = false;
     }
-
-    const out = arr.slice();
-    const discard = Symbol("Discarded item");
-
-    for (let i = 0; i < arr.length; i++) {
-        switch (arr[i]) {
-            case '--discard-next':
-                if (i < out.length - 1) {
-                    out[i + 1] = discard;
-                }
-                out[i] = discard;
-                break;
-            case '--discard-prev':
-                if (i > 0) {
-                    out[i - 1] = discard;
-                }
-                out[i] = discard;
-                break;
-            case '--double-next':
-                if (i < out.length - 1) {
-                    out[i] = out[i + 1];
-                } else {
-                    out[i] = discard;
-                }
-                break;
-            case '--double-prev':
-                if (i > 0) {
-                    out[i] = out[i - 1];
-                } else {
-                    out[i] = discard;
-                }
-        }
-    }
-
-    return out.filter(el => el !== discard);
+  }
+  return transformedArr;
 };

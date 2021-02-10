@@ -1,64 +1,54 @@
 const CustomError = require("../extensions/custom-error");
 
 class VigenereCipheringMachine {
-
-  constructor(type = true) {
-    this.type = type ? 'direct' : 'reverse'
+  constructor(modification) {
+    this.modification = modification ;
   }
 
-  encrypt(message, code) {
-    // throw new CustomError('Not implemented');
-    // remove line with error and write your code here
-    if (message === undefined || code === undefined) {
-      throw new Error("ErrorOfArguments");
-    };
+  encrypt(message, key) {
+    if (message == null || key == null) throw Error();
+    const LATIN_LETTERS = /[A-Za-z]/;
+    const ALPHABET_LENGTH = 26;
+    const FIRST_LETTER_CODE = 'A'.charCodeAt();
+    let codingLetterCounter = 0;
 
-    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    message = message.toUpperCase();
-    code = code.toUpperCase();
-    let result = '';
+    message = message.toUpperCase().split('');
+    key = key.toUpperCase();
 
-    for (let i = 0, j = 0; i < message.length; i++) {
-      if (message[i].match(/^[A-Z]$/)) {
-        let letterNumber = (message[i].charCodeAt() + (code[j % code.length]).charCodeAt() - 130) % 26;
-        let letter = alphabet.charAt(letterNumber);
-        result += letter;
-        j++;
-      } else {
-        result += message[i];
+    message.forEach((element, index) => {
+      if (LATIN_LETTERS.test(element)) {
+        message[index] = String.fromCharCode(
+          ((element.charCodeAt() - FIRST_LETTER_CODE
+            + (key[codingLetterCounter % key.length].charCodeAt() - FIRST_LETTER_CODE))
+            % ALPHABET_LENGTH)
+          + FIRST_LETTER_CODE);
+        codingLetterCounter++;
       }
-    }
-  
-    return this.type === 'reverse'? result.split('').reverse().join(''): result;
+    });
+    return this.modification === false ? message.reverse().join('') : message.join('');
   }
+  decrypt(message, key) {
+    if (message == null || key == null) throw Error();
+    const LATIN_LETTERS = /[A-Za-z]/;
+    const ALPHABET_LENGTH = 26;
+    const FIRST_LETTER_CODE = 'A'.charCodeAt();
+    let codingLetterCounter = 0;
 
+    message = message.toUpperCase().split('');
+    key = key.toUpperCase();
 
-  decrypt(message, code) {
-    // throw new CustomError('Not implemented');
-    // remove line with error and write your code here
-
-    if (message === undefined || code === undefined) {
-      throw new Error("ErrorOfArguments");
-    };
-
-    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    message = message.toUpperCase();
-    code = code.toUpperCase();
-    let result = '';
-
-    for (let i = 0, j = 0; i < message.length; i++) {
-      if (message[i].match(/^[A-Z]$/)) {
-        let letterNumber = (message[i].charCodeAt() - (code[j % code.length]).charCodeAt() + 104) % 26;
-        let letter = alphabet.charAt(letterNumber);
-        result += letter;
-        j++;
-      } else {
-        result += message[i];
+    message.forEach((element, index) => {
+      if (LATIN_LETTERS.test(element)) {
+        message[index] = String.fromCharCode(
+          ((element.charCodeAt() - FIRST_LETTER_CODE
+            + (ALPHABET_LENGTH - (key[codingLetterCounter % key.length].charCodeAt() - FIRST_LETTER_CODE)))
+            % ALPHABET_LENGTH)
+          + FIRST_LETTER_CODE);
+        codingLetterCounter++;
       }
-    }
-    return this.type === 'reverse'? result.split('').reverse().join(''): result;
+    });
+    return this.modification === false ? message.reverse().join('') : message.join('');
   }
 }
-
 
 module.exports = VigenereCipheringMachine;
